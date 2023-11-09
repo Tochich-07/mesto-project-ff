@@ -1,25 +1,30 @@
 import { initialCards } from "./cards.js";
 
-const cardTemplate = document.getElementById("card-template").content;
-let cloneCard = cardTemplate.querySelector(".card").cloneNode(true);
-const cardsUl = document.querySelector(".places__list");
+const cardTemplate = document.querySelector("#card-template").content;
+const cardsContainer = document.querySelector(".places__list");
+
+//Создание карточки
+function createCard(card, fun) {
+  const cloneCard = cardTemplate.querySelector(".card").cloneNode(true);
+  cloneCard.querySelector(".card__image").src = card.link;
+  cloneCard.querySelector(".card__image").alt = card.name;
+  cloneCard.querySelector(".card__title").textContent = card.name;
+  cloneCard.querySelector(".card__delete-button").addEventListener("click", fun);
+  return cloneCard;
+}
+
+//Удаление карточки
+function deleteCard(e) {
+  let item = e.target.closest(".card");
+  item.remove();
+}
 
 //Отрисовка карточек
-function renderCard() {
-  initialCards.forEach(function (el) {
-    cloneCard = cardTemplate.querySelector(".card").cloneNode(true);
-    cloneCard.querySelector(".card__image").src = el.link.toString();
-    cloneCard.querySelector(".card__title").textContent = el.name.toString();
-
-    //  Удаление карточки
-    cloneCard.querySelector(".card__delete-button").addEventListener("click", (e) => {
-        let item = e.target.closest(".card");
-        item.remove();
-      });
-
-    cardsUl.append(cloneCard);
+function renderInitialCards() {
+  initialCards.forEach((item) => {
+    const card = createCard(item, deleteCard);
+    cardsContainer.append(card);
   });
 }
 
-renderCard();
-
+renderInitialCards();
