@@ -4,12 +4,12 @@ const cardTemplate = document.querySelector("#card-template").content;
 const cardsContainer = document.querySelector(".places__list");
 
 //Создание карточки
-function createCard(card, fun) {
+function createCard(card, onDelete) {
   const cloneCard = cardTemplate.querySelector(".card").cloneNode(true);
   cloneCard.querySelector(".card__image").src = card.link;
   cloneCard.querySelector(".card__image").alt = card.name;
   cloneCard.querySelector(".card__title").textContent = card.name;
-  cloneCard.querySelector(".card__delete-button").addEventListener("click", fun);
+  cloneCard.querySelector(".card__delete-button").addEventListener("click", onDelete);
   return cloneCard;
 }
 
