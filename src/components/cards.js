@@ -1,11 +1,5 @@
-import {popupOpen, popupClose } from "./modal.js";
-
-const arkhyzImage = new URL('https://pictures.s3.yandex.net/frontend-developer/cards-compressed/arkhyz.jpg', import.meta.url);
-const chelyabinskImage = new URL('https://pictures.s3.yandex.net/frontend-developer/cards-compressed/chelyabinsk-oblast.jpg', import.meta.url);
-const ivanovoImage = new URL('https://pictures.s3.yandex.net/frontend-developer/cards-compressed/ivanovo.jpg', import.meta.url)
-const kamchatkaImage = new URL('https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kamchatka.jpg', import.meta.url)
-const kholmogorsky = new URL('https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kholmogorsky-rayon.jpg', import.meta.url)
-const baikalImage = new URL('https://pictures.s3.yandex.net/frontend-developer/cards-compressed/baikal.jpg', import.meta.url)
+import {openModal, closeModal } from "./modal.js";
+import {initialCards} from "./card.js"
 
 const cardTemplate = document.getElementById("card-template").content;
 const inputPlaceHeading = document.querySelector(".popup__input_type_card-name");
@@ -17,32 +11,7 @@ let cardName = cloneCard.querySelector(".card__title").textContent;
 let cardLink = cloneCard.querySelector(".card__image").src;
 const popupAdd = document.querySelector(".popup_type_new-card");
 
-const initialCards = [
-    {
-      name: "Архыз",
-      link: arkhyzImage,
-    },
-    {
-      name: "Челябинская область",
-      link: chelyabinskImage,
-    },
-    {
-      name: "Иваново",
-      link: ivanovoImage,
-    },
-    {
-      name: "Камчатка",
-      link: kamchatkaImage,
-    },
-    {
-      name: "Холмогорский район",
-      link: kholmogorsky,
-    },
-    {
-      name: "Байкал",
-      link: baikalImage,
-    }
-];
+
 
 export function createCard(evt) {
   evt.preventDefault();
@@ -52,11 +21,19 @@ export function createCard(evt) {
   cardLink = inputPlaceLink.value;
 
   cloneCard.querySelector(".card__image").src = cardLink;
+  cloneCard.querySelector(".card__image").alt = cardName;
   cloneCard.querySelector(".card__title").textContent = cardName;
   cardsUl.prepend(cloneCard);
   inputPlaceHeading.value = "";
   inputPlaceLink.value = "";
-  popupClose(popupAdd);
+  closeModal(popupAdd);
+
+  const imageCard = cloneCard.querySelector(".card__image");
+  imageCard.addEventListener("click", function () {
+    openModal(popupImage);
+   let imagePopup = document.querySelector(".popup__image").src = cardLink.toString();
+   let imageCaption = document.querySelector(".popup__caption").textContent = cardName.toString();
+  });
 
   cloneCard.querySelector(".card__like-button").addEventListener("click", (e) => {
       e.target.classList.toggle("card__like-button_is-active");
@@ -73,10 +50,11 @@ export function renderCard() {
   initialCards.forEach(function (el) {
     cloneCard = cardTemplate.querySelector(".card").cloneNode(true);
     cloneCard.querySelector(".card__image").src = el.link.toString();
+    cloneCard.querySelector(".card__image").alt = el.name.toString();
     cloneCard.querySelector(".card__title").textContent = el.name.toString();
     const imageCard = cloneCard.querySelector(".card__image");
     imageCard.addEventListener("click", function () {
-      popupOpen(popupImage);
+      openModal(popupImage);
      let imagePopup = document.querySelector(".popup__image").src = el.link.toString();
      let imageCaption = document.querySelector(".popup__caption").textContent = el.name.toString();
     });

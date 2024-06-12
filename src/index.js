@@ -1,74 +1,82 @@
 import { createCard, renderCard } from "./components/cards.js";
-import { popupClose, popupOpen } from "./components/modal.js";
+import { closeModal, openModal } from "./components/modal.js";
 import './styles/index.css';
 
+const popupImage = document.querySelector(".popup_type_image");
+const cardTemplate = document.getElementById("card-template").content;
 const nameInput = document.querySelector(".popup__input_type_name");
 const jobInput = document.querySelector(".popup__input_type_description");
 const nameElement = document.querySelector(".profile__title");
 const jobElement = document.querySelector(".profile__description");
-const openBtnPop = document.querySelector(".profile__edit-button")
+const buttonPopupOpen = document.querySelector(".profile__edit-button")
 const popupProfile = document.querySelector(".popup_type_edit")
-const popupImage = document.querySelector(".popup_type_image");
 const popupAdd = document.querySelector(".popup_type_new-card");
-const closeProfileBtn = document.querySelector(".popup__close")
-const closeBtnPop = document.getElementById("popup__close-id");
-const closeImagePop = document.getElementById("popup-iamge__close-id");
 const btnAddCard = document.querySelector(".profile__add-button");
-const formElement = document.querySelector(".popup__form");
+const formElementProfile = document.querySelector(".popup__form");
+let cloneCard = cardTemplate.querySelector(".card").cloneNode(true);
+const imageCard = cloneCard.querySelector(".card__image");
+
+//Открытие модалки при клике на фото
+export function openModalImage() {
+  imageCard.addEventListener("click", function () {
+    openModal(popupImage);
+    let imagePopup = document.querySelector(".popup__image").src = el.link.toString();
+    let imageCaption = document.querySelector(".popup__caption").textContent = el.name.toString();
+  });
+}
 
 btnAddCard.addEventListener("click", function () {
-  popupOpen(popupAdd);
+  openModal(popupAdd);
 });
 
-closeBtnPop.addEventListener("click", function () {
-  popupClose(popupAdd);
+document.querySelectorAll('.popup__close').forEach(button => {
+  const buttonsPopup = button.closest('.popup'); // нашли родителя с нужным классом
+  button.addEventListener('click', () => closeModal(buttonsPopup)); // закрыли попап
 });
 
-closeImagePop.addEventListener("click", function () {
-  popupClose(popupImage);
-});
-
-closeProfileBtn.addEventListener("click", function () {
-  popupClose(popupProfile);
-});
 
 //Открытие попапа профиля
-openBtnPop.addEventListener("click", function () {
-  popupOpen(popupProfile);
+buttonPopupOpen.addEventListener("click", function () {
+  openModal(popupProfile);
   nameInput.value = nameElement.textContent;
   jobInput.value = jobElement.textContent;
 });
 
-//Закрытие по Оверлею
+// Закрытие по Оверлею
 popupProfile.addEventListener("click", (evt) => {
   if (evt.currentTarget === evt.target) {
-    popupClose(popupProfile)
-  }
-  if (evt.key === 'Escape') {
-    const popup = document.querySelector('.popup_is-opened');
-    popupClose(popup);
+    closeModal(popupProfile)
   }
 })
 
-//Закрытие по клавише
-function closePopupEsc(evt) {
-  if (evt.key === 'Escape') {
-    const popup = document.querySelector('.popup_is-opened');
-    popupClose(popup);
+popupAdd.addEventListener("click", (evt) => {
+  if (evt.currentTarget === evt.target) {
+    closeModal(popupAdd)
   }
-}
+})
 
-document.addEventListener('keydown', closePopupEsc);
+popupImage.addEventListener("click", (evt) => {
+  if (evt.currentTarget === evt.target) {
+    closeModal(popupImage)
+  }
+})
+
+// function closePopupOverlay(evt) {
+//   if (evt.currentTarget === evt.target) {
+//     closeModal(evt)
+// }
+// }
+
 
 //Функция редактирования профиля
-function handleFormSubmit(evt) {
+function handlerFormProfile(evt) {
   evt.preventDefault();
   nameElement.textContent = nameInput.value;
   jobElement.textContent = jobInput.value;
-  popupClose(popupProfile);
+  closeModal(popupProfile);
 }
 
-formElement.addEventListener("submit", handleFormSubmit);
+formElementProfile.addEventListener("submit", handlerFormProfile);
 
 //Создание карточки
 popupAdd.addEventListener("submit", createCard);
