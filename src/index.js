@@ -1,9 +1,9 @@
-import { createCard, initialCards } from "./components/cards.js";
+import { initialCards } from "./components/cards.js";
+import { createCard, likeCard, deleteCard } from "./components/card.js";
 import { closeModal, openModal } from "./components/modal.js";
 import './styles/index.css';
 
-const popupImage = document.querySelector(".popup_type_image");
-const cardTemplate = document.getElementById("card-template").content;
+const popupTypeImage = document.querySelector(".popup_type_image");
 const nameInput = document.querySelector(".popup__input_type_name");
 const jobInput = document.querySelector(".popup__input_type_description");
 const nameElement = document.querySelector(".profile__title");
@@ -14,11 +14,11 @@ const popupAdd = document.querySelector(".popup_type_new-card");
 const formNewCard = document.forms.new__place
 const btnAddCard = document.querySelector(".profile__add-button");
 const formElementProfile = document.querySelector(".popup__form");
-const cloneCard = cardTemplate.querySelector(".card").cloneNode(true);
-const imageCard = cloneCard.querySelector(".card__image");
 const cardsUl = document.querySelector(".places__list");
 const inputPlaceHeading = document.querySelector(".popup__input_type_card-name");
 const inputPlaceLink = document.querySelector(".popup__input_type_url");
+const popupImage = document.querySelector(".popup__image")
+const popupCaption =  document.querySelector(".popup__caption")
 
 btnAddCard.addEventListener("click", function () {
   openModal(popupAdd);
@@ -52,26 +52,14 @@ function handlerFormProfile(evt) {
 
 formElementProfile.addEventListener("submit", handlerFormProfile);
 
-//Функция лайка
-function likeCard(evt) {
-  evt.target.classList.toggle("card__like-button_is-active");
-}
-
-//Функция удалния карточки
-function deleteCard(evt) {
-  const item = evt.target.closest(".card");
-  item.remove();
-}
-
-
 // Открытие модалки при клике на фото
 function openModalImage(data) {
-  document.querySelector(".popup__image").src = data.link;
-  document.querySelector(".popup__caption").textContent = data.name;
-  openModal(popupImage)
+  popupImage.src = data.link;
+  popupImage.alt = data.name;
+  popupCaption.textContent = data.name;
+  
+  openModal(popupTypeImage)
 };
-
-
 
 //Создание карточки
 formNewCard.addEventListener("submit", (evt) => {
