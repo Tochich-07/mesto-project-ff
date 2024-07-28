@@ -1,34 +1,67 @@
+import { deleteCardRequest, addLikeRequest, deleteLikeRequest } from "./api.js";
+
 const cardTemplate = document.getElementById("card-template").content;
 
+
 export function createCard(data, deleteCard, likeCard, openModalImage) {
-    const cloneCard = cardTemplate.querySelector(".card").cloneNode(true);
-  
-    cloneCard.querySelector(".card__image").src = data.link;
-    cloneCard.querySelector(".card__image").alt = data.name;
-    cloneCard.querySelector(".card__title").textContent = data.name;
-  
-    cloneCard.querySelector(".card__delete-button").addEventListener("click", (e) => {
-      deleteCard(e)
+  const cloneCard = cardTemplate.querySelector(".card").cloneNode(true);
+
+  cloneCard.querySelector(".card__image").src = data.link;
+  cloneCard.querySelector(".card__image").alt = data.name;
+  cloneCard.querySelector(".card__title").textContent = data.name;
+
+  const cardDeleteButton = cloneCard.querySelector(".card__delete-button")
+  if (data.cardOwnerId != data.myId) {
+    cardDeleteButton.classList.add("card__delete-button-hidden");
+  } else {
+    cardDeleteButton.addEventListener('click', (evt) => {
+      deleteCard(evt, data.cardId);
     });
-  
-    cloneCard.querySelector(".card__like-button").addEventListener("click", (e) => {
-      likeCard(e)
-    });
-  
-    cloneCard.querySelector(".card__image").addEventListener("click", (e) => {
-      openModalImage(data)
-    });
-  
-    return cloneCard
   }
 
-  //Функция лайка
+  const cardLikeButton = cloneCard.querySelector(".card__like-button")
+  if (data.likes != 0) {
+    data.likes.some((element) => {
+      if (element._id === data.myId) {
+        cardLikeButton.classList.add("card__like-button_is-active");
+      }
+    });
+  }
+
+  const cardLikeCounts = cloneCard.querySelector(".card__like-counts");
+  cardLikeCounts.textContent = data.likes.length;
+  cardLikeButton.addEventListener("click", (evt) => {
+    likeMethod(evt, data.cardId)
+      .then((newCardConfig) => {
+        cardLikeCounts.textContent = newCardConfig.likes.length;
+        likeCard(evt);
+      })
+      .catch((err) => console.log(err));
+  });
+
+  cloneCard.querySelector(".card__image").addEventListener("click", (e) => {
+    openModalImage(data)
+  });
+
+  return cloneCard
+}
+
+//Функция лайка
 export function likeCard(evt) {
-    evt.target.classList.toggle("card__like-button_is-active");
-  }
-  
-  //Функция удалния карточки
- export function deleteCard(evt) {
-    const item = evt.target.closest(".card");
-    item.remove();
-  }
+  evt.target.classList.toggle("card__like-button_is-active");
+}
+
+function likeMethod(evt, cardId) {
+  const like = evt.target.classList.contains("card__like-button_is-active") ? deleteLikeRequest(cardId) : addLikeRequest(cardId);
+  return like
+}
+
+//Функция удалния карточки
+export function deleteCard(evt, cardId) {
+  deleteCardRequest(cardId)
+    .then(() => {
+      const card = evt.target.closest(".card");
+      card.remove();
+    })
+    .catch((err) => console.log(err));
+}
