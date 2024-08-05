@@ -19,11 +19,19 @@
   cursor: pointer;
 }
 
-.popup__button_inactive {
-  border: 1px solid #000000;
-  color: #000000;
-  background: #00000026;
-  opacity: 15%;
+.popup__button_disabled {
+  background: white;
+  color: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.popup__button_disabled:hover {
+	background: rgba(255, 255, 255, 0.8);
+	cursor: default;
+}
+
+.popup__margin-button{
+	margin-top: 31px;
 }
 
 @media screen and (max-width: 568px) {

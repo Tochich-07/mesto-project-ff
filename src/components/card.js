@@ -20,7 +20,7 @@ export function createCard(data, deleteCard, likeCard, openModalImage) {
   }
 
   const cardLikeButton = cloneCard.querySelector(".card__like-button")
-  if (data.likes != 0) {
+  if (data.likes.length != 0) {
     data.likes.some((element) => {
       if (element._id === data.myId) {
         cardLikeButton.classList.add("card__like-button_is-active");

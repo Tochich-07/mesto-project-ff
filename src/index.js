@@ -1,7 +1,7 @@
 import { initialCards } from "./components/cards.js";
 import { createCard, likeCard, deleteCard } from "./components/card.js";
 import { closeModal, openModal } from "./components/modal.js";
-import { enableValidation } from "./components/validation.js";
+import { enableValidation, clearValidation } from "./components/validation.js";
 import { getDataProfile, getDataCards, sendCardData, updateDataProfile, changeUserAvatar } from "./components/api.js";
 import './styles/index.css';
 
@@ -19,6 +19,7 @@ const popupProfile = document.querySelector(".popup_type_edit")
 const popupAdd = document.querySelector(".popup_type_new-card");
 const formNewCard = document.forms.new__place
 const formProfile = document.forms.edit__profile
+const formChangeAva = document.forms.change__avatar
 const name = formProfile.elements.name
 const description = formProfile.elements.description
 const btnAddCard = document.querySelector(".profile__add-button");
@@ -30,14 +31,31 @@ const popupImage = document.querySelector(".popup__image")
 const popupCaption = document.querySelector(".popup__caption")
 const profileImage = document.querySelector(".profile__image")
 
+const validationObj = {
+  formSelector: ".popup__form",
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_disabled",
+  inputErrorClass: "popup__input_type_error",
+  errorClass: "popup__error_visible",
+};
+
+
+
+enableValidation(validationObj);
+
+
+
 let myId = null
 
 btnAddCard.addEventListener("click", function () {
   openModal(popupAdd);
+  clearValidation(formNewCard, validationObj)
 });
 
 profileAvaPic.addEventListener("click", function () {
   openModal(profilePopupAva);
+  clearValidation(formChangeAva, validationObj)
 });
 
 //Закрытие модальных окон
@@ -56,23 +74,24 @@ buttonPopupOpen.addEventListener("click", function () {
   openModal(popupProfile);
   nameInput.value = nameElement.textContent;
   jobInput.value = jobElement.textContent;
+  clearValidation(formProfile, validationObj)
 });
 
 //Функция редактирования профиля
 function handlerFormProfile(evt) {
   evt.preventDefault();
-  renderLoading(true,formProfile.elements['edit-button']);
+  renderLoading(true, formProfile.elements['edit-button']);
 
-  updateDataProfile({name: name.value, about: description.value})
-		.then((res) => {
-			nameElement.textContent = res.name;
-			jobElement.textContent = res.about;
-			closeModal(popupProfile);
-		})
-		.catch((err) => {
-			console.log(err);
-		})
-		.finally(() => renderLoading(false, formProfile.elements['edit-button']));
+  updateDataProfile({ name: name.value, about: description.value })
+    .then((res) => {
+      nameElement.textContent = res.name;
+      jobElement.textContent = res.about;
+      closeModal(popupProfile);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => renderLoading(false, formProfile.elements['edit-button']));
 }
 
 formProfile.addEventListener("submit", handlerFormProfile);
@@ -94,24 +113,25 @@ function addCards(el, deleteCard) {
 //Создание карточки
 formNewCard.addEventListener("submit", (evt) => {
   evt.preventDefault();
-  renderLoading(true,formNewCard.elements['new-card-button']);
+  renderLoading(true, formNewCard.elements['new-card-button']);
 
   sendCardData({ name: inputPlaceHeading.value, link: inputPlaceLink.value })
-	.then((card) => {
-		addCards({name: card.name,
-			link: card.link,
-			cardId: card._id,
-			cardOwnerId: card.owner._id,
-			myId: card.owner._id,
-			likes: card.likes
-			}, deleteCard);
-			formNewCard.reset();
-			closeModal(popupAdd);
-	})
-	.catch((err) => {
-		console.log(err);
-	})
-	.finally(() => renderLoading(false, formNewCard.elements['new-card-button']));
+    .then((card) => {
+      addCards({
+        name: card.name,
+        link: card.link,
+        cardId: card._id,
+        cardOwnerId: card.owner._id,
+        myId: card.owner._id,
+        likes: card.likes
+      }, deleteCard);
+      formNewCard.reset();
+      closeModal(popupAdd);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => renderLoading(false, formNewCard.elements['new-card-button']));
 });
 
 
@@ -126,7 +146,7 @@ function renderCard(data) {
 }
 
 
-enableValidation();
+
 
 getDataCards().then((result) => {
   renderCard(result);
@@ -137,53 +157,57 @@ const isLoadingText = 'Сохранение...';
 const originalText = 'Сохранить';
 
 function renderLoading(isLoading, button) {
-	button.textContent = isLoading ? isLoadingText : originalText;
+  button.textContent = isLoading ? isLoadingText : originalText;
 }
 
-const formChangeAvatarElement = document.forms['change-avatar'];
+const formChangeAvatarElement = document.forms['change__avatar'];
 const newAvatarUrlInput = formChangeAvatarElement.elements.link;
 
 function handleChangeAvatarForm(evt) {
   evt.preventDefault();
   renderLoading(true, formChangeAvatarElement.elements['change-avatar-button']);
   changeUserAvatar(newAvatarUrlInput.value)
-      .then(newAvatarConfig => {
-        profileImage.style = "background-image: url(" + newAvatarConfig.avatar + ");";
-        closeModal(document.querySelector('.popup_is-opened'));
-        resetChangeAvatarForm();
-      })
-      .catch(err => {console.log(err)})
-      .finally(() => renderLoading(false, formChangeAvatarElement.elements['change-avatar-button']));
+    .then(newAvatarConfig => {
+      profileImage.style = "background-image: url(" + newAvatarConfig.avatar + ");";
+      closeModal(document.querySelector('.popup_is-opened'));
+      resetChangeAvatarForm();
+    })
+    .catch(err => { console.log(err) })
+    .finally(() => renderLoading(false, formChangeAvatarElement.elements['change-avatar-button']));
 
 }
 
 formChangeAvatarElement.addEventListener('submit', handleChangeAvatarForm);
 
 function resetChangeAvatarForm() {
-	formChangeAvatarElement.reset();
+  formChangeAvatarElement.reset();
 }
 
 Promise.all([getDataCards(), getDataProfile()])
-.then(([cardsArray, myUserData]) => {
-	cardsArray.reverse().forEach(card => addCards(
-		{ name: card.name,
-			link: card.link,
-			cardId: card._id,
-			cardOwnerId: card.owner._id,
-			myId: myUserData._id,
-			likes: card.likes}, deleteCard))
+  .then(([cardsArray, myUserData]) => {
+    cardsArray.reverse().forEach(card => addCards(
+      {
+        name: card.name,
+        link: card.link,
+        cardId: card._id,
+        cardOwnerId: card.owner._id,
+        myId: myUserData._id,
+        likes: card.likes
+      }, deleteCard))
 
-			changeUserData({name: myUserData.name,
-				description: myUserData.about,
-				avatar: myUserData.avatar});
-    })
-    .catch(err => {console.log(err)});
+    changeUserData({
+      name: myUserData.name,
+      description: myUserData.about,
+      avatar: myUserData.avatar
+    });
+  })
+  .catch(err => { console.log(err) });
 
 function changeUserData(userDataConfig) {
-    nameElement.textContent = userDataConfig.name;
-    jobElement.textContent = userDataConfig.description;
-    profileImage.style = "background-image: url(" + userDataConfig.avatar + ");";
+  nameElement.textContent = userDataConfig.name;
+  jobElement.textContent = userDataConfig.description;
+  profileImage.style = "background-image: url(" + userDataConfig.avatar + ");";
 
-    name.value = nameElement.textContent;
-		description.value = jobElement.textContent;
+  name.value = nameElement.textContent;
+  description.value = jobElement.textContent;
 }
