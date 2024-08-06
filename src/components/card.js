@@ -31,15 +31,7 @@ export function createCard(data, deleteCard, likeCard, openModalImage) {
   const cardLikeCounts = cloneCard.querySelector(".card__like-counts");
   cardLikeCounts.textContent = data.likes.length;
 
-  const likeCardCallback = (evt, cardId, cardLikeCounts) => {
-    likeMethod(evt, cardId)
-      .then((newCardConfig) => {
-        cardLikeCounts.textContent = newCardConfig.likes.length;
-        likeCard(evt);
-      })
-      .catch((err) => console.log(err));
-  }
-  cardLikeButton.addEventListener("click", (evt) => { likeCardCallback(evt, data.cardId, cardLikeCounts) });
+  cardLikeButton.addEventListener("click", (evt) => { likeCard(evt, data.cardId, cardLikeCounts) });
 
   cloneCard.querySelector(".card__image").addEventListener("click", (e) => {
     openModalImage(data)
@@ -49,13 +41,22 @@ export function createCard(data, deleteCard, likeCard, openModalImage) {
 }
 
 //Функция лайка
-export function likeCard(evt) {
+ function likeCardClassToggle(evt) {
   evt.target.classList.toggle("card__like-button_is-active");
 }
 
 function likeMethod(evt, cardId) {
   const like = evt.target.classList.contains("card__like-button_is-active") ? deleteLikeRequest(cardId) : addLikeRequest(cardId);
   return like
+}
+
+export const likeCard = (evt, cardId, cardLikeCounts) => {
+  likeMethod(evt, cardId)
+    .then((newCardConfig) => {
+      cardLikeCounts.textContent = newCardConfig.likes.length;
+      likeCardClassToggle(evt);
+    })
+    .catch((err) => console.log(err));
 }
 
 //Функция удалния карточки
