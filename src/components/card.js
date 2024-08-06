@@ -31,6 +31,7 @@ export function createCard(data, deleteCard, likeCard, openModalImage) {
   const cardLikeCounts = cloneCard.querySelector(".card__like-counts");
   cardLikeCounts.textContent = data.likes.length;
 
+
   cardLikeButton.addEventListener("click", (evt) => { likeCard(evt, data.cardId, cardLikeCounts) });
 
   cloneCard.querySelector(".card__image").addEventListener("click", (e) => {
@@ -41,7 +42,7 @@ export function createCard(data, deleteCard, likeCard, openModalImage) {
 }
 
 //Функция лайка
- function likeCardClassToggle(evt) {
+ function likeCardToggleClass(evt) {
   evt.target.classList.toggle("card__like-button_is-active");
 }
 
@@ -54,7 +55,7 @@ export const likeCard = (evt, cardId, cardLikeCounts) => {
   likeMethod(evt, cardId)
     .then((newCardConfig) => {
       cardLikeCounts.textContent = newCardConfig.likes.length;
-      likeCardClassToggle(evt);
+      likeCardToggleClass(evt);
     })
     .catch((err) => console.log(err));
 }

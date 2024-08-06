@@ -135,25 +135,6 @@ formNewCard.addEventListener("submit", (evt) => {
     .finally(() => renderLoading(false, formNewCard.elements['new-card-button']));
 });
 
-
-
-//Отрисовка карточек
-function renderCard(data) {
-  data.forEach(function (el) {
-    const card = createCard(el, deleteCard, likeCard, openModalImage)
-
-    cardsUl.prepend(card);
-  });
-}
-
-
-
-
-getDataCards().then((result) => {
-  renderCard(result);
-});
-
-
 const isLoadingText = 'Сохранение...';
 const originalText = 'Сохранить';
 
