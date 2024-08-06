@@ -1,5 +1,5 @@
 # Проектная работа Mesto
-# Проект: Место https://tochich-07.github.io/mesto-project-ff/
+# Проект: Место https://toshich-07.github.io/mesto-project-ff
 # H1 Мой лэндинг "Место" в Япрактикуме
 ## H2 Описание проекта
 1. Это лэндинг оформленный по БЭМ и nested

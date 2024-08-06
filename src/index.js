@@ -38,6 +38,7 @@ const validationObj = {
   inactiveButtonClass: "popup__button_disabled",
   inputErrorClass: "popup__input_type_error",
   errorClass: "popup__error_visible",
+  marginTopClass: "popup__margin-button"
 };
 
 

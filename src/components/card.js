@@ -30,14 +30,16 @@ export function createCard(data, deleteCard, likeCard, openModalImage) {
 
   const cardLikeCounts = cloneCard.querySelector(".card__like-counts");
   cardLikeCounts.textContent = data.likes.length;
-  cardLikeButton.addEventListener("click", (evt) => {
-    likeMethod(evt, data.cardId)
+
+  const likeCardCallback = (evt, cardId, cardLikeCounts) => {
+    likeMethod(evt, cardId)
       .then((newCardConfig) => {
         cardLikeCounts.textContent = newCardConfig.likes.length;
         likeCard(evt);
       })
       .catch((err) => console.log(err));
-  });
+  }
+  cardLikeButton.addEventListener("click", (evt) => { likeCardCallback(evt, data.cardId, cardLikeCounts) });
 
   cloneCard.querySelector(".card__image").addEventListener("click", (e) => {
     openModalImage(data)
